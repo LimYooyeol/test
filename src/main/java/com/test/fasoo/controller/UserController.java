@@ -2,21 +2,27 @@ package com.test.fasoo.controller;
 
 
 import com.test.fasoo.dto.User;
+import com.test.fasoo.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequestMapping("/user")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    UserService userService;
+
+    private final UserService userService;
 
     @PostMapping("/")
     public String createUser(User user){
-
+        System.out.println(user);
+        userService.createUser(user);
+        return "200";
     }
 
 }
