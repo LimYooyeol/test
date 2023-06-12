@@ -13,5 +13,7 @@ public class UserAuthService {
     public int createUserAuth(UserAuth userAuth){
         return userAuthMapper.createUserAuth(userAuth);
     }
-
+    public UserAuth readUserAuth(long userId){
+        return userAuthMapper.readUserAuth(userId);
+    }
 }

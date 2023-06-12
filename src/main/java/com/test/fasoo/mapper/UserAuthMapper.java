@@ -6,4 +6,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface UserAuthMapper {
     public int createUserAuth(UserAuth userAuth);
+    public UserAuth readUserAuth(long userId);
 }

@@ -8,4 +8,8 @@
         INSERT INTO auth_user(auth_type_id, user_id, resource_id, begin_date, expire_date)
         VALUES(#{authTypeId}, #{userId}, #{resourceId}, #{beginDate}, #{expireDate});
     </insert>
+
+    <select id="readUserAuth" parameterType="long" resultType="com.test.fasoo.dto.UserAuth">
+        SELECT * FROM auth_user WHERE auth_user_id = #{userId};
+    </select>
 </mapper>

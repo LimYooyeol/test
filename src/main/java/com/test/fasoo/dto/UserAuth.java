@@ -1,9 +1,7 @@
 package com.test.fasoo.dto;
 
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -11,6 +9,8 @@ import java.util.Date;
 @ToString
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserAuth {
     private long authUserId;
     private long authTypeId;
@@ -25,8 +25,6 @@ public class UserAuth {
     private Date createDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date updateDate;
-
-    public UserAuth(){};
 
     public UserAuth(long authTypeId, long userId, long resourceId, Date beginDate, Date expireDate){
         this.authTypeId = authTypeId;
