@@ -1,6 +1,6 @@
 package com.test.fasoo.vo;
 
-public class AdminTypeVO {
+public class AdminTypeVo {
 
     private String id;
     private String adminTypeName;

@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class UserRoleVO {
+public class UserRoleVo {
 
     private Integer id;
     private String adminTypeId;

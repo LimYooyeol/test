@@ -14,7 +14,7 @@
         </selectKey>
     </insert>
 
-    <select id="selectUserRoleById" resultType="com.test.fasoo.vo.UserRoleVO">
+    <select id="selectUserRoleById" resultType="com.test.fasoo.vo.UserRoleVo">
         SELECT  *
         FROM    USER_ROLE
         WHERE   ID=#{id}

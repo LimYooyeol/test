@@ -1,6 +1,6 @@
 package com.test.fasoo.dto.UserRole;
 
-import com.test.fasoo.vo.UserRoleVO;
+import com.test.fasoo.vo.UserRoleVo;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -18,7 +18,7 @@ public class UserRoleResponse {
 
     public UserRoleResponse(){}
 
-    public UserRoleResponse(UserRoleVO userRoleVO) {
+    public UserRoleResponse(UserRoleVo userRoleVO) {
         this.userId = userRoleVO.getUserId();
         this.adminTypeId = userRoleVO.getAdminTypeId();
         this.createTime = userRoleVO.getCreateTime();

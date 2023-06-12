@@ -3,7 +3,7 @@ package com.test.fasoo.service;
 import com.test.fasoo.dto.UserRole.UserRoleRequest;
 import com.test.fasoo.dto.UserRole.UserRoleResponse;
 import com.test.fasoo.mapper.UserRoleMapper;
-import com.test.fasoo.vo.UserRoleVO;
+import com.test.fasoo.vo.UserRoleVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +18,7 @@ public class UserRoleService {
     @Transactional(readOnly = false)
     public UserRoleResponse addUserRole(UserRoleRequest userRoleRequest){
         int result = userRoleMapper.insertUserRole(userRoleRequest);
-        UserRoleVO userRoleVO = userRoleMapper.selectUserRoleById(userRoleRequest.getId());
+        UserRoleVo userRoleVO = userRoleMapper.selectUserRoleById(userRoleRequest.getId());
 
         return new UserRoleResponse(userRoleVO);
     }

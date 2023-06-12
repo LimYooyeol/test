@@ -2,7 +2,7 @@ package com.test.fasoo.mapper;
 
 
 import com.test.fasoo.dto.UserRole.UserRoleRequest;
-import com.test.fasoo.vo.UserRoleVO;
+import com.test.fasoo.vo.UserRoleVo;
 import org.apache.ibatis.annotations.Mapper;
 
 
@@ -13,6 +13,6 @@ public interface UserRoleMapper {
     public int insertUserRole(UserRoleRequest userRoleRequest);
 
     // 관리자 조회
-    public UserRoleVO selectUserRoleById(int id);
+    public UserRoleVo selectUserRoleById(int id);
 
 }
