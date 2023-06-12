@@ -10,27 +10,37 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-public class UserAuth {
-    private long authUserId;
-    private long authTypeId;
-    private long userId;
-    private long resourceId;
+public class AuthUser {
+    private long id;
+    private String authTypeId;
+    private String userId;
+    private String resourceId;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date beginDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date expireDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date createDate;
+    private Date createTime;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date updateDate;
+    private Date updateTime;
 
-    public UserAuth(long authTypeId, long userId, long resourceId, Date beginDate, Date expireDate){
+    public AuthUser(String authTypeId, String userId, String resourceId, Date beginDate, Date expireDate){
         this.authTypeId = authTypeId;
         this.userId = userId;
         this.resourceId = resourceId;
         this.beginDate = beginDate;
         this.expireDate = expireDate;
     }
+
+    public AuthUser(String authTypeId, String userId, String resourceId, Date beginDate, Date expireDate, Date createTime, Date updateTime){
+        this.authTypeId = authTypeId;
+        this.userId = userId;
+        this.resourceId = resourceId;
+        this.beginDate = beginDate;
+        this.expireDate = expireDate;
+        this.createTime = createTime;
+        this.updateTime = updateTime;
+    }
+
 }

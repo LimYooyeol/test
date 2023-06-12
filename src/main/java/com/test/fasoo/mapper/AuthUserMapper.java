@@ -1,10 +1,17 @@
 package com.test.fasoo.mapper;
 
-import com.test.fasoo.dto.UserAuth;
+import com.test.fasoo.dto.AuthUser;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
-public interface UserAuthMapper {
-    public int createUserAuth(UserAuth userAuth);
-    public UserAuth readUserAuth(long userId);
+public interface AuthUserMapper {
+    public int createAuthUser(AuthUser authUser);
+    public AuthUser readAuthUser(String userId);
+
+    public List<AuthUser> getUserList(String userId);
+
+    public List<AuthUser> getAuthList(String userId);
+
 }
