@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.test.fasoo.mapper.AuthUserMapper">
+
+    <insert id="insertAuthUser" parameterType="com.test.fasoo.dto.AuthUser.AuthUserRequest" useGeneratedKeys="true">
+        INSERT
+        INTO    AUTH_USER(REQUEST_ID, AUTH_TYPE_ID, USER_ID, DATA_ID, BEGIN_DATE, EXPIRE_DATE)
+        VALUES
+        <foreach collection="dataIdList" item="dataId" open="(" separator="), (" close=")">
+            #{requestId}, #{authTypeId}, #{userId}, #{dataId}, #{beginDate}, #{expireDate}
+        </foreach>
+        ;
+    </insert>
+
+    <resultMap id="authUserResponseResult" type="com.test.fasoo.dto.AuthUser.AuthUserResponse">
+        <result property="requestId" column="request_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="authTypeName" column="auth_type_name"/>
+        <result property="beginDate" column="begin_date"/>
+        <result property="expireDate" column="expire_date"/>
+        <collection property="dataIdList" column="request_id" select="selectDataListByRequestId"/>
+    </resultMap>
+
+    <select id="selectDataListByRequestId" resultType="string">
+        SELECT  DATA_ID
+        FROM    AUTH_USER
+        WHERE   REQUEST_ID=#{request_id}
+    </select>
+
+    <select id="selectAuthUserResponseByRequestId" resultMap="authUserResponseResult">
+        SELECT  DISTINCT
+                            REQUEST_ID,
+                            USER_ID,
+                            AUTH_TYPE_NAME,
+                            BEGIN_DATE,
+                            EXPIRE_DATE,
+                            CREATE_DATE,
+                            UPDATE_DATE
+        FROM    AUTH_USER A
+                JOIN
+                AUTH_TYPE B
+                ON  A.AUTH_TYPE_ID = B.ID
+        WHERE   REQUEST_ID = #{requestId}
+    </select>
+
+</mapper>

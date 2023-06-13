@@ -29,10 +29,15 @@ public class GlobalExceptionHandler {
         }
 
         ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setCode("-001");
+        errorResponse.setCode("INVALID_PARAMETER");
         errorResponse.setMessage(builder.toString());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(CustomException.class)
+    protected ResponseEntity handleCustomException(CustomException e){
+        return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getCode(), e.getMessage()));
     }
 
 }
