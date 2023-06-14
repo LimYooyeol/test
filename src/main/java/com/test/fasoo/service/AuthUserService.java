@@ -35,7 +35,7 @@ public class AuthUserService {
         }catch(DataIntegrityViolationException e){
             SQLException cause = (SQLException) e.getCause();
 
-            if(cause.getErrorCode() == 1452){   // FK 조건 위반
+            if(cause.getErrorCode() == 1048){   // DATA_ID가 없어 FK가 null이 되는 경우
                 throw new CustomException(UNDEFINED_AUTH_TYPE);
             }else if(cause.getErrorCode() == 1062){     // UNIQUE 조건 위반
                 throw new CustomException(DUPLICATED_AUTH);
