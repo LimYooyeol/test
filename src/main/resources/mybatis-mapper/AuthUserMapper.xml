@@ -10,7 +10,7 @@
         INTO    AUTH_USER(REQUEST_ID, AUTH_TYPE_ID, USER_ID, DATA_ID, BEGIN_DATE, EXPIRE_DATE)
         VALUES
         <foreach collection="dataIdList" item="dataId" open="(" separator="), (" close=")">
-            #{requestId}, #{authTypeId}, #{userId}, #{dataId}, #{beginDate}, #{expireDate}
+            #{requestId}, (SELECT ID FROM AUTH_TYPE WHERE AUTH_TYPE_NAME = #{authTypeName}), #{userId}, #{dataId}, #{beginDate}, #{expireDate}
         </foreach>
         ;
     </insert>

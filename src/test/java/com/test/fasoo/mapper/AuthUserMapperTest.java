@@ -25,7 +25,7 @@ class AuthUserMapperTest {
         // given
         AuthUserRequest authUserRequest = new AuthUserRequest();
         authUserRequest.setRequestId("REQUEST_0001");
-        authUserRequest.setAuthTypeId("DATA_USE");
+        authUserRequest.setAuthTypeName("DATA_USE");
         authUserRequest.setUserId("USER1");
 
         String[] dataIdArray = {"DATA01", "DATA02", "DATA03"};
