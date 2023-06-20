@@ -18,14 +18,15 @@ public class AuthUserRequest {
     private String requestId;
 
     @NotNull
-    private String authTypeName;
+    private String authTypeId;
 
     @NotNull
     private String userId;
 
 
     @Size(min = 1)
-    private List<String> dataIdList;
+    @NotNull
+    private List<String> resourceIdList;
 
     @NotNull
     private LocalDate beginDate;

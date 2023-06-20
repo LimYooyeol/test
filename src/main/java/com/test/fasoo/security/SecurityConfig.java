@@ -5,19 +5,29 @@ import com.test.fasoo.exception.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.ProviderNotFoundException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.server.resource.BearerTokenError;
+import org.springframework.security.oauth2.server.resource.BearerTokenErrors;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationFilter;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
+import org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.header.HeaderWriterFilter;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -25,8 +35,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-@EnableWebSecurity(debug = false)
+@EnableWebSecurity(debug = true)
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -40,6 +52,47 @@ public class SecurityConfig {
 
         ProviderManager providerManager = new ProviderManager(ssoTokenAuthenticationProvider);
         BearerTokenAuthenticationFilter bearerTokenAuthenticationFilter = new BearerTokenAuthenticationFilter(providerManager);
+        bearerTokenAuthenticationFilter.setAuthenticationEntryPoint(new AuthenticationEntryPoint() {
+            @Override
+            public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                ErrorResponse errorResponse = new ErrorResponse();
+                errorResponse.setCode("UNSUPPORTED_HEADER");
+                errorResponse.setMessage("올바르지 않은 헤더입니다.");
+
+                ObjectMapper mapper = new ObjectMapper();
+
+                response.getWriter().write(mapper.writeValueAsString(errorResponse));
+            }
+        });
+        bearerTokenAuthenticationFilter.setBearerTokenResolver(new BearerTokenResolver() {
+
+            private static final Pattern authorizationPattern = Pattern.compile("^Bearer (?<token>[a-zA-Z0-9-._~+/]+=*)$",
+                    Pattern.CASE_INSENSITIVE);
+            private String bearerTokenHeaderName = HttpHeaders.AUTHORIZATION;
+            @Override
+            public String resolve(HttpServletRequest request) {
+                final String authorizationHeaderToken = resolveFromAuthorizationHeader(request);
+
+                return authorizationHeaderToken;
+            }
+
+            private String resolveFromAuthorizationHeader(HttpServletRequest request) {
+                String authorization = request.getHeader(this.bearerTokenHeaderName);
+                if (!StringUtils.startsWithIgnoreCase(authorization, "bearer")) {
+                    BearerTokenError error = BearerTokenErrors.invalidRequest("Not a bearer token");
+                    throw new OAuth2AuthenticationException(error);
+                }
+                Matcher matcher = authorizationPattern.matcher(authorization);
+                if (!matcher.matches()) {
+                    BearerTokenError error = BearerTokenErrors.invalidToken("Bearer token is malformed");
+                    throw new OAuth2AuthenticationException(error);
+                }
+                return matcher.group("token");
+            }
+        });
         bearerTokenAuthenticationFilter.setAuthenticationFailureHandler(ssoTokenAuthenticationFailureHandler);
 
 
@@ -61,34 +114,13 @@ public class SecurityConfig {
                     }
                 });
 
-//        http
-//                .addFilterBefore(new OncePerRequestFilter() {
-//            @Override
-//            protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-//                try{
-//                    filterChain.doFilter(request, response);
-//                }catch (ProviderNotFoundException e){
-//                    response.setStatus(HttpStatus.FORBIDDEN.value());
-//                    response.setContentType("application/json");
-//                    response.setCharacterEncoding("UTF-8");
-//                    ErrorResponse errorResponse = new ErrorResponse();
-//                    errorResponse.setCode("FORBIDDEN_REQUEST");
-//                    errorResponse.setMessage("허용되지 않은 요청입니다.");
-//
-//                    ObjectMapper mapper = new ObjectMapper();
-//
-//                    response.getWriter().write(mapper.writeValueAsString(errorResponse));
-//                }
-//            }
-//        }, BearerTokenAuthenticationFilter.class);
-
         http
                 .csrf()
                 .disable()
                 .addFilterAfter(bearerTokenAuthenticationFilter, CsrfFilter.class)
                 .authorizeRequests()
                 .anyRequest()
-                .hasRole("ADMIN");  // 임시 설정 -> Custom  Authority AuthorizationManager 를 이용하는 방법으로 전환 필요 할 수 있음 (매핑을 DB에서 읽어야 한다면)
+                .hasRole("ADMIN");
 
         return http.build();
     }

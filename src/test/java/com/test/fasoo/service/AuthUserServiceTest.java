@@ -1,5 +1,6 @@
 package com.test.fasoo.service;
 
+import com.test.fasoo.dto.AuthUser.AuthId;
 import com.test.fasoo.dto.AuthUser.AuthUserRequest;
 import com.test.fasoo.dto.AuthUser.AuthUserResponse;
 import com.test.fasoo.exception.CustomException;
@@ -40,11 +41,11 @@ class AuthUserServiceTest {
         );
 
         // when
-        AuthUserResponse authUserResponse = authUserService.addAuthUser(authUserRequest);
+        List<AuthId> authIds = authUserService.addAuthUser(authUserRequest);
 
         // then
-        assertNotNull(authUserResponse);
-        assertEquals(dataIdArray.length, authUserResponse.getDataIdList().size());
+        assertNotNull(authIds);
+        assertEquals(dataIdArray.length, authIds.size());
     }
 
     @Test
@@ -149,7 +150,7 @@ class AuthUserServiceTest {
                 LocalDate.of(2023, 8, 14)
         );
 
-        AuthUserResponse authUserResponse1 = authUserService.addAuthUser(authUserRequest1);
+        authUserService.addAuthUser(authUserRequest1);
 
         // when
         CustomException customException = assertThrows(CustomException.class, () -> authUserService.addAuthUser(authUserRequest2));
@@ -182,7 +183,7 @@ class AuthUserServiceTest {
                 LocalDate.of(2023, 8, 1)
         );
 
-        AuthUserResponse authUserResponse1 = authUserService.addAuthUser(authUserRequest1);
+        authUserService.addAuthUser(authUserRequest1);
 
         // when
         CustomException customException = assertThrows(CustomException.class, () -> authUserService.addAuthUser(authUserRequest2));

@@ -5,45 +5,27 @@
 
 <mapper namespace="com.test.fasoo.mapper.AuthUserMapper">
 
+    <select id="countAuthUserByRequestId" resultType="_int">
+        SELECT  COUNT(*)
+        FROM    AUTH_USER
+        WHERE   REQUEST_ID=#{requestId}
+    </select>
+
     <insert id="insertAuthUser" parameterType="com.test.fasoo.dto.AuthUser.AuthUserRequest" useGeneratedKeys="true">
         INSERT
-        INTO    AUTH_USER(REQUEST_ID, AUTH_TYPE_ID, USER_ID, DATA_ID, BEGIN_DATE, EXPIRE_DATE)
+        INTO    AUTH_USER(REQUEST_ID, AUTH_TYPE_ID, USER_ID, RESOURCE_ID, BEGIN_DATE, EXPIRE_DATE)
         VALUES
-        <foreach collection="dataIdList" item="dataId" open="(" separator="), (" close=")">
-            #{requestId}, (SELECT ID FROM AUTH_TYPE WHERE AUTH_TYPE_NAME = #{authTypeName}), #{userId}, #{dataId}, #{beginDate}, #{expireDate}
+        <foreach collection="resourceIdList" item="resourceId" open="(" separator="), (" close=")">
+            #{requestId}, #{authTypeId}, #{userId}, #{resourceId}, #{beginDate}, #{expireDate}
         </foreach>
         ;
     </insert>
 
-    <resultMap id="authUserResponseResult" type="com.test.fasoo.dto.AuthUser.AuthUserResponse">
-        <result property="requestId" column="request_id"/>
-        <result property="userId" column="user_id"/>
-        <result property="authTypeName" column="auth_type_name"/>
-        <result property="beginDate" column="begin_date"/>
-        <result property="expireDate" column="expire_date"/>
-        <collection property="dataIdList" column="request_id" select="selectDataListByRequestId"/>
-    </resultMap>
-
-    <select id="selectDataListByRequestId" resultType="string">
-        SELECT  DATA_ID
+    <select id="selectAuthIdsByRequestId" resultType="com.test.fasoo.dto.AuthUser.AuthId">
+        SELECT  ID AS AUTH_USER_ID, RESOURCE_ID
         FROM    AUTH_USER
-        WHERE   REQUEST_ID=#{request_id}
+        WHERE   REQUEST_ID=#{requestId}
     </select>
 
-    <select id="selectAuthUserResponseByRequestId" resultMap="authUserResponseResult">
-        SELECT  DISTINCT
-                            REQUEST_ID,
-                            USER_ID,
-                            AUTH_TYPE_NAME,
-                            BEGIN_DATE,
-                            EXPIRE_DATE,
-                            CREATE_DATE,
-                            UPDATE_DATE
-        FROM    AUTH_USER A
-                JOIN
-                AUTH_TYPE B
-                ON  A.AUTH_TYPE_ID = B.ID
-        WHERE   REQUEST_ID = #{requestId}
-    </select>
 
 </mapper>

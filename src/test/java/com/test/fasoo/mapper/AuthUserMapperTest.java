@@ -1,5 +1,6 @@
 package com.test.fasoo.mapper;
 
+import com.test.fasoo.dto.AuthUser.AuthId;
 import com.test.fasoo.dto.AuthUser.AuthUserRequest;
 import com.test.fasoo.dto.AuthUser.AuthUserResponse;
 import org.junit.jupiter.api.Test;
@@ -21,16 +22,27 @@ class AuthUserMapperTest {
     private AuthUserMapper authUserMapper;
 
     @Test
+    public void 권한_카운트_BY_REQUEST_ID_테스트1(){
+        // given
+
+        // when
+        int count = authUserMapper.countAuthUserByRequestId("REQUEST1");
+
+        // then
+        assertEquals(0, count);
+    }
+
+    @Test
     public void 권한추가_삽입_테스트(){
 
         // given
         AuthUserRequest authUserRequest = new AuthUserRequest();
         authUserRequest.setRequestId("REQUEST_0001");
-        authUserRequest.setAuthTypeName("DATA_USE");
+        authUserRequest.setAuthTypeId("DATA_USE");
         authUserRequest.setUserId("USER1");
 
         String[] dataIdArray = {"DATA01", "DATA02", "DATA03"};
-        authUserRequest.setDataIdList(Arrays.asList(dataIdArray));
+        authUserRequest.setResourceIdList(Arrays.asList(dataIdArray));
 
         authUserRequest.setBeginDate(LocalDate.of(2023, 7, 1));
         authUserRequest.setExpireDate(LocalDate.of(2023, 8, 1));
@@ -43,39 +55,47 @@ class AuthUserMapperTest {
     }
 
     @Test
-    public void 권한추가_조회_테스트(){
+    public void 권한_카운트_BY_REQUEST_ID_테스트2(){
         // given
-        String[] dataIdArray1 = {"DATA01", "DATA02", "DATA03"};
-        AuthUserRequest authUserRequest1 = new AuthUserRequest(
-                "REQUEST_1",
+        String requestId = "REQUEST_1";
+        String[] dataIdArray = {"DATA01", "DATA02", "DATA03"};
+        AuthUserRequest authUserRequest = new AuthUserRequest(
+                requestId,
                 "DATA_USE",
                 "USER1",
-                Arrays.asList(dataIdArray1),
+                Arrays.asList(dataIdArray),
                 LocalDate.of(2023, 7, 1),
                 LocalDate.of(2023, 8, 1)
         );
-
-        String[] dataIdArray2= {"DATA04", "DATA05"};
-        AuthUserRequest authUserRequest2 = new AuthUserRequest(
-                "REQUEST_2",
-                "DATA_USE",
-                "USER1",
-                Arrays.asList(dataIdArray2),
-                LocalDate.of(2023, 7, 2),
-                LocalDate.of(2023, 8, 2)
-        );
-
-        authUserMapper.insertAuthUser(authUserRequest1);
-        authUserMapper.insertAuthUser(authUserRequest2);
+        authUserMapper.insertAuthUser(authUserRequest);
 
         // when
-        List<AuthUserResponse> authUserResponse2 = authUserMapper.selectAuthUserResponseByRequestId(authUserRequest2.getRequestId());
+        int count = authUserMapper.countAuthUserByRequestId(requestId);
 
         // then
-        assertNotNull(authUserResponse2);
-        assertEquals(1, authUserResponse2.size());
-        assertEquals(dataIdArray2.length, authUserResponse2.get(0).getDataIdList().size());
+        assertEquals(dataIdArray.length, count);
+    }
 
-        System.out.println(authUserResponse2);
+    @Test
+    public void 권한추가_조회_테스트(){
+        // given
+        AuthUserRequest authUserRequest = new AuthUserRequest();
+        authUserRequest.setRequestId("REQUEST_0001");
+        authUserRequest.setAuthTypeId("DATA_USE");
+        authUserRequest.setUserId("USER1");
+
+        String[] dataIdArray = {"DATA01", "DATA02", "DATA03"};
+        authUserRequest.setResourceIdList(Arrays.asList(dataIdArray));
+
+        authUserRequest.setBeginDate(LocalDate.of(2023, 7, 1));
+        authUserRequest.setExpireDate(LocalDate.of(2023, 8, 1));
+
+        authUserMapper.insertAuthUser(authUserRequest);
+
+        // when
+        List<AuthId> authIds = authUserMapper.selectAuthIdsByRequestId(authUserRequest.getRequestId());
+
+        // then
+        assertEquals(dataIdArray.length, authIds.size());
     }
 }
