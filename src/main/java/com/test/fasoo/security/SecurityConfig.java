@@ -8,19 +8,25 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.ProviderNotFoundException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.web.header.HeaderWriterFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -35,6 +41,7 @@ public class SecurityConfig {
         ProviderManager providerManager = new ProviderManager(ssoTokenAuthenticationProvider);
         BearerTokenAuthenticationFilter bearerTokenAuthenticationFilter = new BearerTokenAuthenticationFilter(providerManager);
         bearerTokenAuthenticationFilter.setAuthenticationFailureHandler(ssoTokenAuthenticationFailureHandler);
+
 
         http
                 .exceptionHandling()
@@ -53,6 +60,27 @@ public class SecurityConfig {
                         response.getWriter().write(mapper.writeValueAsString(errorResponse));
                     }
                 });
+
+//        http
+//                .addFilterBefore(new OncePerRequestFilter() {
+//            @Override
+//            protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+//                try{
+//                    filterChain.doFilter(request, response);
+//                }catch (ProviderNotFoundException e){
+//                    response.setStatus(HttpStatus.FORBIDDEN.value());
+//                    response.setContentType("application/json");
+//                    response.setCharacterEncoding("UTF-8");
+//                    ErrorResponse errorResponse = new ErrorResponse();
+//                    errorResponse.setCode("FORBIDDEN_REQUEST");
+//                    errorResponse.setMessage("허용되지 않은 요청입니다.");
+//
+//                    ObjectMapper mapper = new ObjectMapper();
+//
+//                    response.getWriter().write(mapper.writeValueAsString(errorResponse));
+//                }
+//            }
+//        }, BearerTokenAuthenticationFilter.class);
 
         http
                 .csrf()

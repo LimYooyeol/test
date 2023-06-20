@@ -123,6 +123,72 @@ class AuthUserServiceTest {
 
         // then
         assertEquals(BEGIN_AFTER_EXPIRE.getCode(), customException.getCode());
+    }
+
+    @Test
+    @DisplayName("REQUEST_ID가 중복되는 경우 - 다른 형태의 요청이 REQUEST_ID가 같은 경우")
+    public void 권한추가_실패_테스트4(){
+        // given
+        String[] dataIdArray1 = {"DATA1", "DATA2", "DATA3"};
+        AuthUserRequest authUserRequest1 = new AuthUserRequest(
+                "REQUEST_1",
+                "DATA_USE",
+                "USER1",
+                Arrays.asList(dataIdArray1),
+                LocalDate.of(2023, 7, 1),
+                LocalDate.of(2023, 8, 1)
+        );
+
+        String[] dataIdArray2 = {"DATA4"};
+        AuthUserRequest authUserRequest2 = new AuthUserRequest(
+                "REQUEST_1",
+                "DATA_USE",
+                "USER2",
+                Arrays.asList(dataIdArray2),
+                LocalDate.of(2023, 8, 1),
+                LocalDate.of(2023, 8, 14)
+        );
+
+        AuthUserResponse authUserResponse1 = authUserService.addAuthUser(authUserRequest1);
+
+        // when
+        CustomException customException = assertThrows(CustomException.class, () -> authUserService.addAuthUser(authUserRequest2));
+
+        // then
+        assertEquals(DUPLICATED_REQUEST_ID.getCode(), customException.getCode());
+    }
+
+    @Test
+    @DisplayName("REQUEST_ID가 중복되는 경우 - 동시에 동일한 API가 호출되는 경우")
+    public void 권한추가_실패_테스트5(){
+        // given
+        String[] dataIdArray1 = {"DATA1", "DATA2", "DATA3"};
+        AuthUserRequest authUserRequest1 = new AuthUserRequest(
+                "REQUEST_1",
+                "DATA_USE",
+                "USER1",
+                Arrays.asList(dataIdArray1),
+                LocalDate.of(2023, 7, 1),
+                LocalDate.of(2023, 8, 1)
+        );
+
+        String[] dataIdArray2 = {"DATA4"};
+        AuthUserRequest authUserRequest2 = new AuthUserRequest(
+                "REQUEST_1",
+                "DATA_USE",
+                "USER1",
+                Arrays.asList(dataIdArray2),
+                LocalDate.of(2023, 7, 1),
+                LocalDate.of(2023, 8, 1)
+        );
+
+        AuthUserResponse authUserResponse1 = authUserService.addAuthUser(authUserRequest1);
+
+        // when
+        CustomException customException = assertThrows(CustomException.class, () -> authUserService.addAuthUser(authUserRequest2));
+
+        // then
+        assertEquals(DUPLICATED_REQUEST_ID.getCode(), customException.getCode());
 
     }
 

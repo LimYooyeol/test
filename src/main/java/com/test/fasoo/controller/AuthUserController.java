@@ -16,9 +16,11 @@ import javax.validation.Valid;
 public class AuthUserController {
     private final AuthUserService authUserService;
 
+    /*
+        권한 추가
+     */
     @PostMapping("/data-auth")
     public AuthUserResponse authUserAdd(@RequestBody @Valid AuthUserRequest authUserRequest){
-        System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         AuthUserResponse authUserResponse = authUserService.addAuthUser(authUserRequest);
 
 

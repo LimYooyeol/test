@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -68,11 +69,12 @@ class AuthUserMapperTest {
         authUserMapper.insertAuthUser(authUserRequest2);
 
         // when
-        AuthUserResponse authUserResponse2 = authUserMapper.selectAuthUserResponseByRequestId(authUserRequest2.getRequestId());
+        List<AuthUserResponse> authUserResponse2 = authUserMapper.selectAuthUserResponseByRequestId(authUserRequest2.getRequestId());
 
         // then
         assertNotNull(authUserResponse2);
-        assertEquals(dataIdArray2.length, authUserResponse2.getDataIdList().size());
+        assertEquals(1, authUserResponse2.size());
+        assertEquals(dataIdArray2.length, authUserResponse2.get(0).getDataIdList().size());
 
         System.out.println(authUserResponse2);
     }
