@@ -110,9 +110,7 @@ public class SecurityConfig {
                 .csrf()
                 .disable()
                 .addFilterAfter(bearerTokenAuthenticationFilter, CsrfFilter.class)
-                .authorizeRequests()
-                .anyRequest()
-                .hasRole("SYSTEM_ADMIN");
+                .authorizeHttpRequests((authorize) -> authorize.anyRequest().authenticated());
 
         return http.build();
     }
