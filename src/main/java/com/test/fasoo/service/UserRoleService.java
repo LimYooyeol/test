@@ -1,6 +1,5 @@
 package com.test.fasoo.service;
 
-import com.test.fasoo.dto.UserRole.UserRoleRequest;
 import com.test.fasoo.dto.UserRole.UserRoleResponse;
 import com.test.fasoo.mapper.UserRoleMapper;
 import com.test.fasoo.vo.UserRoleVo;
@@ -14,13 +13,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserRoleService {
     
     private final UserRoleMapper userRoleMapper;
+//
+//    @Transactional(readOnly = false)
+//    public UserRoleResponse addUserRole(UserRoleRequest userRoleRequest){
+//        int result = userRoleMapper.insertUserRole(userRoleRequest);
+//        UserRoleVo userRoleVO = userRoleMapper.selectUserRoleById(userRoleRequest.getId());
+//
+//        return new UserRoleResponse(userRoleVO);
+//    }
 
-    @Transactional(readOnly = false)
-    public UserRoleResponse addUserRole(UserRoleRequest userRoleRequest){
-        int result = userRoleMapper.insertUserRole(userRoleRequest);
-        UserRoleVo userRoleVO = userRoleMapper.selectUserRoleById(userRoleRequest.getId());
+    public UserRoleResponse findUserRoleByUserId(String userId){
+        UserRoleVo userRoleVo = userRoleMapper.selectUserRoleByUserId(userId);
 
-        return new UserRoleResponse(userRoleVO);
+        return userRoleVo == null ? null : new UserRoleResponse(userRoleVo);
     }
-
+    
 }

@@ -13,6 +13,6 @@ public interface UserRoleMapper {
     public int insertUserRole(UserRoleRequest userRoleRequest);
 
     // 관리자 조회
-    public UserRoleVo selectUserRoleById(int id);
+    public UserRoleVo selectUserRoleByUserId(String userId);
 
 }
