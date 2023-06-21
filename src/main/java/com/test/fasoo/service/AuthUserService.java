@@ -1,5 +1,6 @@
 package com.test.fasoo.service;
 
+import com.test.fasoo.aspect.annotation.AdminTypeAuthCheck;
 import com.test.fasoo.dto.AuthUser.AuthId;
 import com.test.fasoo.dto.AuthUser.AuthUserRequest;
 import com.test.fasoo.dto.AuthUser.AuthUserResponse;
@@ -27,6 +28,7 @@ public class AuthUserService {
         권한 추가
      */
     @Transactional(readOnly = false)
+    @AdminTypeAuthCheck
     public List<AuthId> addAuthUser(AuthUserRequest authUserRequest){
         if(authUserRequest.getBeginDate().isAfter(authUserRequest.getExpireDate())){
             throw new CustomException(BEGIN_AFTER_EXPIRE);

@@ -23,6 +23,10 @@ public class SsoTokenAuthenticationProvider implements AuthenticationProvider {
 
     private final UserRoleService userRoleService;
 
+    @Value("role-prefix")
+    String rolePrefix;
+
+
     @Value("${secret-key}")
     private String secretKey;
 
@@ -38,7 +42,6 @@ public class SsoTokenAuthenticationProvider implements AuthenticationProvider {
 
             // 임시 역할 조회 START
             List<SimpleGrantedAuthority> authorities = new LinkedList<>();
-            String rolePrefix = "ROLE_";
 
             UserRoleResponse userRole = userRoleService.findUserRoleByUserId(subject);
             if(userRole != null){

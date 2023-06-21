@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.test.fasoo.mapper.AdminTypeAuthMapper">
+
+
+    <select id="checkAdminTypeAuthByAuthTypeIdAndAdminTypeId" resultType="com.test.fasoo.dto.AdminTypeAuth.AdminTypeAuthCheck">
+        SELECT
+                (COUNT(*) &gt; 0 ) AS IS_VALID_AUTH_TYPE_ID,
+                (COUNT(N) &lt; COUNT(*)) AS HAS_AUTHORITY
+        FROM    (
+                    SELECT  NULLIF(ADMIN_TYPE_ID, #{adminTypeId}) AS N
+                    FROM    ADMIN_TYPE_AUTH
+                    WHERE   AUTH_TYPE_ID=#{authTypeId}
+                ) AS A
+    </select>
+
+</mapper>

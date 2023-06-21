@@ -1,5 +1,6 @@
 package com.test.fasoo.dto.AuthUser;
 
+import com.test.fasoo.dto.AuthTypeIdExtractable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthUserRequest {
+public class AuthUserRequest implements AuthTypeIdExtractable {
 
     @NotNull
     private String requestId;
