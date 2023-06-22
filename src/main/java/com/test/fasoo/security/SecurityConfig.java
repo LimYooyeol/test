@@ -1,12 +1,10 @@
 package com.test.fasoo.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.test.fasoo.exception.ErrorResponse;
+import com.test.fasoo.exception.CustomErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -47,16 +45,7 @@ public class SecurityConfig {
         bearerTokenAuthenticationFilter.setAuthenticationEntryPoint(new AuthenticationEntryPoint() {
             @Override
             public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
-                response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
-                ErrorResponse errorResponse = new ErrorResponse();
-                errorResponse.setCode("UNSUPPORTED_HEADER");
-                errorResponse.setMessage("올바르지 않은 헤더입니다.");
-
-                ObjectMapper mapper = new ObjectMapper();
-
-                response.getWriter().write(mapper.writeValueAsString(errorResponse));
+                SecurityFilterUtil.handleFilterException(response, CustomErrorCode.UNSUPPORTED_HEADER);
             }
         });
         bearerTokenAuthenticationFilter.setBearerTokenResolver(new BearerTokenResolver() {
@@ -93,16 +82,7 @@ public class SecurityConfig {
                 .accessDeniedHandler(new AccessDeniedHandler() {
                     @Override
                     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-                        response.setStatus(HttpStatus.FORBIDDEN.value());
-                        response.setContentType("application/json");
-                        response.setCharacterEncoding("UTF-8");
-                        ErrorResponse errorResponse = new ErrorResponse();
-                        errorResponse.setCode("FORBIDDEN_REQUEST");
-                        errorResponse.setMessage("허용되지 않은 요청입니다.");
-
-                        ObjectMapper mapper = new ObjectMapper();
-
-                        response.getWriter().write(mapper.writeValueAsString(errorResponse));
+                        SecurityFilterUtil.handleFilterException(response, CustomErrorCode.FORBIDDEN_REQUEST);
                     }
                 });
 
