@@ -13,7 +13,8 @@ public enum CustomErrorCode {
     NULL_AUTH_TYPE(HttpStatus.BAD_REQUEST, "NULL_AUTH_TYPE", "권한 유형이 비어있습니다."),
     FORBIDDEN_REQUEST(HttpStatus.FORBIDDEN, "FORBIDDEN_REQUEST", "허용되지 않은 요청입니다."),
     UNSUPPORTED_HEADER(HttpStatus.BAD_REQUEST, "UNSUPPORTED_HEADER", "올바르지 않은 헤더입니다."),
-    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "INVALID_TOKEN", "유효하지 않은 토큰입니다.")
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "INVALID_TOKEN", "유효하지 않은 토큰입니다."),
+    INVALID_DATE_FORMAT(HttpStatus.BAD_REQUEST, "INVALID_DATE_FORMAT", "유효하지 않은 날짜 형태입니다.")
     ;
 
 

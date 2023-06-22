@@ -3,11 +3,14 @@ package com.test.fasoo.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.time.format.DateTimeParseException;
 
 
 @RestControllerAdvice
@@ -34,6 +37,12 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
+
+    @ExceptionHandler(DateTimeParseException.class)
+    protected ResponseEntity handleDateTimeParseException(DateTimeParseException e){
+        return handleCustomException(new CustomException(CustomErrorCode.INVALID_DATE_FORMAT));
+    }
+
 
     @ExceptionHandler(CustomException.class)
     protected ResponseEntity handleCustomException(CustomException e){
