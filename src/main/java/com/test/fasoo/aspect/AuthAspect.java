@@ -1,7 +1,8 @@
 package com.test.fasoo.aspect;
 
-import com.test.fasoo.dto.AdminTypeAuth.AdminTypeAuthCheck;
+import com.test.fasoo.dto.AdminTypeAuth.AdminTypeAuthCheckResult;
 import com.test.fasoo.dto.AdminTypeAuth.AdminTypeAuthSearch;
+import com.test.fasoo.dto.AuthCheckResult;
 import com.test.fasoo.dto.AuthTypeIdExtractable;
 import com.test.fasoo.exception.CustomException;
 import com.test.fasoo.service.AdminTypeAuthService;
@@ -43,13 +44,13 @@ public class AuthAspect {
         String adminTypeId = getAdminTypeId(((List<GrantedAuthority>)authentication.getAuthorities()).get(0));
         String authTypeName = getAuthTypeId(joinPoint).getAuthTypeId();
 
-        AdminTypeAuthCheck adminTypeAuthCheck = adminTypeAuthService.checkAdminTypeAuth(new AdminTypeAuthSearch(authTypeName, adminTypeId));
+        AdminTypeAuthCheckResult adminTypeAuthCheckResult = adminTypeAuthService.checkAdminTypeAuth(new AdminTypeAuthSearch(authTypeName, adminTypeId));
 
-        if(!adminTypeAuthCheck.getIsValidAuthTypeId()){
+        if(adminTypeAuthCheckResult.getAuthCheckResult().equals(AuthCheckResult.INVALID_AUTH_TYPE)){
             // 존재하지 않은 권한 유형인 경우
             throw new CustomException(UNDEFINED_AUTH_TYPE);
         }
-        if(!adminTypeAuthCheck.getHasAuthority()){
+        if(adminTypeAuthCheckResult.getAuthCheckResult().equals(AuthCheckResult.UNAUTHORIZED)){
             // 담당하는 권한 유형이 아닌 관리자인 경우
             throw new CustomException(FORBIDDEN_REQUEST);
         }

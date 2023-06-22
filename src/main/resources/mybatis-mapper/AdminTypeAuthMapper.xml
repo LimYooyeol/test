@@ -6,15 +6,20 @@
 <mapper namespace="com.test.fasoo.mapper.AdminTypeAuthMapper">
 
 
-    <select id="checkAdminTypeAuthByAuthTypeIdAndAdminTypeId" resultType="com.test.fasoo.dto.AdminTypeAuth.AdminTypeAuthCheck">
+    <select id="checkAdminTypeAuthByAuthTypeIdAndAdminTypeId" resultType="com.test.fasoo.dto.AdminTypeAuth.AdminTypeAuthCheckResult">
         SELECT
-                (COUNT(*) &gt; 0 ) AS IS_VALID_AUTH_TYPE_ID,
-                (COUNT(N) &lt; COUNT(*)) AS HAS_AUTHORITY
+            (CASE
+            WHEN COUNT(*) = 0 THEN 'INVALID_AUTH_TYPE'
+            ELSE 	(CASE
+                    WHEN COUNT(N) &lt; COUNT(*) THEN 'AUTHORIZED'
+                    ELSE 'UNAUTHORIZED'
+                    END)
+            END) 	AS 	AUTH_CHECK_RESULT
         FROM    (
-                    SELECT  NULLIF(ADMIN_TYPE_ID, #{adminTypeId}) AS N
-                    FROM    ADMIN_TYPE_AUTH
-                    WHERE   AUTH_TYPE_ID=#{authTypeId}
-                ) AS A
+            SELECT  NULLIF(ADMIN_TYPE_ID, 'SYSTEM_ADMIN') AS N
+            FROM    ADMIN_TYPE_AUTH
+            WHERE   AUTH_TYPE_ID='DATA_USE'
+        ) AS A
     </select>
 
 </mapper>
